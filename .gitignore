@@ -1,2 +1,14 @@
-node_modules
+node_modules/
+dist/
+build/
+.output/
+
 .env
+.env.local
+backend/uploads/
+backend/storage/
+*.log
+
+.DS_Store
+.vscode/
+.idea/
