@@ -1,0 +1,27 @@
+{
+  "id": "project_000001",
+  "status": "uploaded",
+  "createdAt": "2026-07-25T20:44:24.301Z",
+  "updatedAt": "2026-07-25T20:44:25.112Z",
+  "audio": {
+    "original": "audio/original.mp3",
+    "originalName": "Đừng mộng mơ nữa .mp3",
+    "wav": "audio/original.wav",
+    "info": {
+      "duration": 145.24081632653062,
+      "sampleRate": 44100,
+      "channels": 2,
+      "bitrate": 128000,
+      "codec": "MPEG 1 Layer 3",
+      "container": "MPEG",
+      "codecProfile": "CBR",
+      "lossless": false
+    }
+  },
+  "analysis": {
+    "tempo": null,
+    "key": null,
+    "notes": false,
+    "waveform": false
+  }
+}

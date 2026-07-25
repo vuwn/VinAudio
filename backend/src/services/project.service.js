@@ -1,117 +1,116 @@
 import fs from "fs";
 import path from "path";
+import WaveFormService from "../services/waveform.service.js";
 
 class ProjectService {
-        
-    async createProject(fileInfo) {
+  async createProject(fileInfo) {
+    const uploadPath = path.join(process.cwd(), "src", "uploads");
 
-        const uploadPath = path.join(process.cwd(), "src", "uploads");
-
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-
-        const projects = fs
-        .readdirSync(uploadPath)
-            .filter((item) =>
-                fs.statSync(path.join(uploadPath, item)).isDirectory()
-            );
-
-        const nextProjectId = `project_${String(projects.length + 1).padStart(6, "0")}`;
-
-        const projectPath = path.join(uploadPath, nextProjectId);
-        fs.mkdirSync(projectPath);
-        
-        this.createProjectStructure(projectPath);
-
-        this.createMetadata(projectPath, nextProjectId, fileInfo);
-
-        this.createNotes(projectPath);
-
-        return {
-        projectId: nextProjectId,
-        projectPath
-        };
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
     }
 
-    createProjectStructure(projectPath) {
-        const folders = ["audio", "renders", "stems", "cache"];
+    const projects = fs
+      .readdirSync(uploadPath)
+      .filter((item) => fs.statSync(path.join(uploadPath, item)).isDirectory());
 
-            folders.forEach((folderName) => {
+    const nextProjectId = `project_${String(projects.length + 1).padStart(6, "0")}`;
 
-                const folderPath = path.join(projectPath, folderName);
+    const projectPath = path.join(uploadPath, nextProjectId);
+    fs.mkdirSync(projectPath);
 
-                if (!fs.existsSync(folderPath)) {
-                    fs.mkdirSync(folderPath);
-                }
+    this.createProjectStructure(projectPath);
 
-            });
+    this.createMetadata(projectPath, nextProjectId, fileInfo);
 
-    }
+    this.createNotes(projectPath);
+    
 
-    createMetadata(projectPath, projectId, fileInfo) {
+    return {
+      projectId: nextProjectId,
+      projectPath,
+    };
+  }
 
-        const metadata = {
-            id: projectId,
-            status: "uploaded",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            audio: {
-                original: "audio/original.mp3",
-                originalName: fileInfo.originalname,
-                wav: "audio/original.wav",
-                info: {
-                        duration: null,
-                        sampleRate: null,
-                        channels: null,
-                        bitrate: null,
-                        codec: null,
-                        container: null
-                }
-            },
-            analysis: {
-                tempo: null,
-                key: null,
-                notes: false,
-                waveform: false
-            }
-        }
-            
-        const metadataPath = path.join(projectPath, "metadata.json");
-        fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+  createProjectStructure(projectPath) {
+    const folders = ["audio", "renders", "stems", "cache"];
 
-    }
+    folders.forEach((folderName) => {
+      const folderPath = path.join(projectPath, folderName);
 
-    createNotes(projectPath) {
+      if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath);
+      }
+    });
+  }
 
-        const notes = {
-            notes: []
-        };
-        
-        const notesPath = path.join(projectPath, "notes.json");
-        fs.writeFileSync(notesPath, JSON.stringify(notes, null, 2));
+  createMetadata(projectPath, projectId, fileInfo) {
+    const metadata = {
+      id: projectId,
+      status: "uploaded",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      audio: {
+        original: "audio/original.mp3",
+        originalName: fileInfo.originalname,
+        wav: "audio/original.wav",
+        info: {
+          duration: null,
+          sampleRate: null,
+          channels: null,
+          bitrate: null,
+          codec: null,
+          container: null,
+        },
+      },
+      analysis: {
+        tempo: null,
+        key: null,
+        notes: false,
+        waveform: false,
+      },
+    };
 
-    }
+    const metadataPath = path.join(projectPath, "metadata.json");
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+  }
 
-    updateMetadata(projectPath, data) {
+  createNotes(projectPath) {
+    const notes = {
+      notes: [],
+    };
 
-        const metadataPath = path.join(projectPath, "metadata.json");
-        const content = fs.readFileSync(metadataPath, "utf-8"); 
-        const metadata = JSON.parse(content);
+    const notesPath = path.join(projectPath, "notes.json");
+    fs.writeFileSync(notesPath, JSON.stringify(notes, null, 2));
+  }
 
-        metadata.audio.info = {
-            ...metadata.audio.info,
-            ...data
-        };
+  readMetadata(projectPath) {
+    const metadataPath = path.join(projectPath, "metadata.json");
+    const content = fs.readFileSync(metadataPath, "utf-8");
+    const metadata = JSON.parse(content);
+    return metadata;
+  }
 
-        metadata.updatedAt = new Date().toISOString();
-        fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-        
-    }
+  writeMetadata(projectPath, metadata) {
+    const metadataPath = path.join(projectPath, "metadata.json");
+    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+  }
 
+  updateMetadata(projectPath, data) {
+    const metadata = this.readMetadata(projectPath);
 
+    metadata.audio.info = {
+      ...metadata.audio.info,
+      ...data,
+    };
+
+    metadata.updatedAt = new Date().toISOString();
+    this.writeMetadata(projectPath, metadata);
+  }
+
+  getProjectPath(projectId) {
+    return path.join(process.cwd(), "src", "uploads", projectId);
+  }
 }
-
-
 
 export default new ProjectService();
