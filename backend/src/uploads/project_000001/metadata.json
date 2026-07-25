@@ -1,0 +1,25 @@
+{
+  "id": "project_000001",
+  "status": "uploaded",
+  "createdAt": "2026-07-24T18:56:44.561Z",
+  "updatedAt": "2026-07-24T18:56:44.563Z",
+  "audio": {
+    "original": "audio/original.mp3",
+    "originalName": "Đừng mộng mơ nữa .mp3",
+    "wav": "audio/original.wav",
+    "info": {
+      "duration": null,
+      "sampleRate": null,
+      "channels": null,
+      "bitrate": null,
+      "codec": null,
+      "container": null
+    }
+  },
+  "analysis": {
+    "tempo": null,
+    "key": null,
+    "notes": false,
+    "waveform": false
+  }
+}
